@@ -330,7 +330,7 @@
                 addHistory(`Bơm Badge (${games} game, ${hours}h)`, data.msg || "Lỗi không xác định", false);
             }
         } catch (e) {
-            writeLog('log-badge', "Lỗi kết nối Server (Đợi 30s do Host khởi động lại)!", "error");
+            writeLog('log-badge', "Lỗi kết nối Server!", "error");
             addHistory(`Bơm Badge (${games} game, ${hours}h)`, "Lỗi kết nối Server", false);
         } finally {
             btn.disabled = false;
@@ -367,7 +367,7 @@
                 addHistory("Làm Auto Quest", data.msg || "Lỗi không xác định", false);
             }
         } catch (e) {
-            writeLog('log-quest', "Lỗi kết nối Server (Đợi 30s do Host khởi động lại)!", "error");
+            writeLog('log-quest', "Lỗi kết nối Server!", "error");
             addHistory("Làm Auto Quest", "Lỗi kết nối Server", false);
         } finally {
             btn.disabled = false;
