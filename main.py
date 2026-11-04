@@ -5,7 +5,7 @@ import time
 import uuid
 import urllib.request
 import urllib.error
-import urllib.parse
+import urllib.parse # <--- Đã thêm thư viện còn thiếu
 import os
 import logging
 
@@ -26,7 +26,7 @@ USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTM
 # ==========================================
 CLIENT_ID = "1567541821196996728"
 CLIENT_SECRET = "gX9V9BL--R6cpmwW9PDEhPYvtepINtqo"
-REDIRECT_URI = "https://c-c.ph0977806.workers.dev/"
+REDIRECT_URI = "https://ph0977806-collab.github.io/C-c-/"
 # ==========================================
 
 def safe_request(url, headers, data=None, method="GET", timeout=15):
@@ -65,6 +65,9 @@ def load_games():
     except:
         return []
 
+# ==========================================
+# API ĐĂNG NHẬP DISCORD (OAUTH2)
+# ==========================================
 @app.route('/api/discord_login', methods=['POST'])
 def discord_login():
     data = request.json
@@ -98,6 +101,9 @@ def discord_login():
     else:
         return jsonify({"status": "error", "msg": "Không lấy được thông tin user"}), 401
 
+# ==========================================
+# API BƠM BADGE
+# ==========================================
 @app.route('/api/claim', methods=['POST'])
 def claim_badge():
     try:
@@ -147,6 +153,9 @@ def claim_badge():
     except Exception:
         return jsonify({"status": "error", "msg": "Lỗi xử lý phía server"}), 500
 
+# ==========================================
+# API LÀM QUEST
+# ==========================================
 @app.route('/api/quest', methods=['POST'])
 def do_quests():
     try:
