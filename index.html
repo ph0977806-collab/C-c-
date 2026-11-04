@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibe Tools - Discord Badge & Quest</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #f8f9fa; --bg-card: #ffffff; --text-main: #1a1a1a;
+            --text-muted: #6b7280; --primary: #5c53f2; --primary-hover: #4a42d6;
+            --border: #e5e7eb; --success: #10b981; --danger: #ef4444;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; }
+        .app-container { width: 100%; max-width: 480px; background: var(--bg-card); min-height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.05); position: relative; padding-bottom: 80px; }
+
+        /* Header */
+        .header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); background: var(--bg-card); position: sticky; top: 0; z-index: 10; }
+        .header-logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; }
+        .header-logo span { color: var(--primary); }
+        .header-icons { display: flex; gap: 12px; }
+        .icon-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; background: transparent; cursor: pointer; color: var(--text-muted); font-size: 16px; }
+
+        /* User Profile */
+        .user-profile { margin: 16px 20px; padding: 16px; background: var(--bg-body); border: 1px solid var(--border); border-radius: 16px; display: flex; align-items: center; justify-content: space-between; }
+        .user-info { display: flex; align-items: center; gap: 12px; }
+        .avatar { width: 44px; height: 44px; border-radius: 50%; background: #5865F2; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 20px; object-fit: cover; }
+        .user-name { font-weight: 600; font-size: 15px; }
+        .user-tag { font-size: 13px; color: var(--text-muted); }
+        .balance { background: #ecfdf5; color: var(--success); padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+        .logout-btn { font-size: 13px; color: var(--danger); cursor: pointer; font-weight: 600; background: #fee2e2; padding: 8px 12px; border-radius: 8px; border: none; }
+
+        /* Menu List */
+        .menu-section { padding: 0 20px; margin-bottom: 24px; }
+        .menu-label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+        .menu-item { display: flex; align-items: center; gap: 16px; padding: 16px; border-radius: 12px; cursor: pointer; transition: background 0.2s; font-weight: 500; font-size: 15px; }
+        .menu-item:hover { background: var(--bg-body); }
+        .menu-item.active { background: #f3f4f6; font-weight: 600; }
+
+        /* Form Content */
+        .tab-content { display: none; padding: 0 20px; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+        .card-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.5; }
+        .input-group { margin-bottom: 16px; }
+        .input-group label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 8px; }
+        input, textarea { width: 100%; padding: 14px 16px; border: 1px solid var(--border); border-radius: 12px; font-size: 14px; outline: none; transition: border 0.2s; background: var(--bg-card); }
+        input:focus, textarea:focus { border-color: var(--primary); }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .btn { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; transition: background 0.2s; text-decoration: none;}
+        .btn:hover { background: var(--primary-hover); }
+        .btn:disabled { background: var(--border); cursor: not-allowed; }
+        .btn-discord { background: #5865F2; margin-top: 20px;}
+        .btn-discord:hover { background: #4752C4; }
+
+        /* Log Box */
+        .log-box { background: #1e1e24; color: #d1d5db; padding: 16px; border-radius: 12px; font-family: monospace; font-size: 13px; height: 150px; overflow-y: auto; margin-top: 24px; display: none; }
+        .log-box.active { display: block; }
+        .log-success { color: #34d399; }
+        .log-error { color: #f87171; }
+
+        /* History List */
+        .history-list { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
+        .history-item { background: var(--bg-body); border: 1px solid var(--border); padding: 12px 16px; border-radius: 12px; display: flex; flex-direction: column; gap: 4px; }
+        .history-time { font-size: 12px; color: var(--text-muted); }
+        .history-action { font-weight: 600; font-size: 14px; }
+        .history-status.success { color: var(--success); font-size: 13px; }
+        .history-status.error { color: var(--danger); font-size: 13px; }
+        .empty-history { text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 20px; }
+
+        /* Bottom Nav */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 480px; background: var(--bg-card); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 12px 0; z-index: 10; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 11px; color: var(--text-muted); cursor: pointer; }
+        .nav-item.active { color: var(--primary); font-weight: 600; }
+
+        /* Login Screen */
+        #login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; padding: 24px; text-align: center; }
+        .login-box { width: 100%; padding: 24px; border-radius: 16px; border: 1px solid var(--border); background: var(--bg-body); }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    
+    <!-- ================= MÀN HÌNH LOGIN ================= -->
+    <div id="login-screen">
+        <div class="login-box">
+            <div style="font-size: 48px; margin-bottom: 16px;">🤖</div>
+            <div class="card-title" style="justify-content: center;">Vibe Tools</div>
+            <div class="card-desc">Vui lòng đăng nhập bằng Discord để sử dụng các tính năng bơm Badge và Auto Quest.</div>
+            
+            <a href="https://link-katabump-cua-he.com/api/login" class="btn btn-discord" id="btn-login">
+                Đăng nhập với Discord
+            </a>
+        </div>
+    </div>
+
+    <!-- ================= GIAO DIỆN CHÍNH ================= -->
+    <div id="main-app" style="display: none;">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#5c53f2"/><path d="M8 12L11 15L16 9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Vibe<span>Host</span>
+            </div>
+            <div class="header-icons">
+                <button class="icon-btn" onclick="switchTab('history')">📜</button>
+                <button class="icon-btn">⚙️</button>
+            </div>
+        </div>
+
+        <!-- User Profile -->
+        <div class="user-profile" id="user-profile">
+            <div class="user-info">
+                <img class="avatar" id="user-avatar" src="" alt="Avatar">
+                <div>
+                    <div class="user-name" id="user-name">Đang tải...</div>
+                    <div class="user-tag" id="user-tag">...</div>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="logout()">Đăng xuất</button>
+        </div>
+
+        <!-- Menu -->
+        <div class="menu-section" id="main-menu">
+            <div class="menu-label">SẢN PHẨM</div>
+            <div class="menu-item active" onclick="switchTab('badge', this)"><span>⚔️</span> Discord Badge (Playtime)</div>
+            <div class="menu-item" onclick="switchTab('quest', this)"><span>🎯</span> Auto Quest</div>
+        </div>
+
+        <!-- CONTENT: BADGE -->
+        <div id="tab-badge" class="tab-content active">
+            <div class="card-title">⚔️ Bơm Playtime</div>
+            <div class="card-desc">Tự động cộng giờ chơi game vào hồ sơ Discord.</div>
+            <div class="input-group"><label>Token Discord (Bắt buộc)</label><input type="password" id="badge-token" placeholder="Dán token..."></div>
+            <div class="input-group"><label>Cookie (cf_clearance)</label><textarea id="badge-cookie" rows="2" placeholder="Dán cookie..."></textarea></div>
+            <div class="row">
+                <div class="input-group"><label>Số Game</label><input type="number" id="badge-games" value="100"></div>
+                <div class="input-group"><label>Giờ / Game</label><input type="number" id="badge-hours" value="10"></div>
+            </div>
+            <button class="btn" id="btn-run-badge" onclick="runBadge()">🚀 Bắt đầu bơm</button>
+            <div class="log-box" id="log-badge"></div>
+        </div>
+
+        <!-- CONTENT: QUEST -->
+        <div id="tab-quest" class="tab-content">
+            <div class="card-title">🎯 Auto Quest</div>
+            <div class="card-desc">Tự động hoàn thành các nhiệm vụ (Quest) hiện có.</div>
+            <div class="input-group"><label>Token Discord (Bắt buộc)</label><input type="password" id="quest-token" placeholder="Dán token..."></div>
+            <button class="btn" id="btn-run-quest" onclick="runQuest()">✨ Bắt đầu chạy</button>
+            <div class="log-box" id="log-quest"></div>
+        </div>
+
+        <!-- CONTENT: HISTORY -->
+        <div id="tab-history" class="tab-content">
+            <div class="card-title">📜 Lịch Sử</div>
+            <div class="card-desc">Các lần chạy tool gần đây trên trình duyệt này.</div>
+            <div class="history-list" id="history-list"></div>
+        </div>
+
+        <!-- Bottom Nav -->
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="switchTab('badge', document.querySelectorAll('.menu-item')[0])">🏠 Trang chủ</div>
+            <div class="nav-item" onclick="switchTab('history')">📜 Lịch sử</div>
+            <div class="nav-item">👤 Tài khoản</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ==========================================
+    // THAY LINK KATABUMP CỦA HE VÀO ĐÂY
+    // ==========================================
+    const API_URL = "https://link-katabump-cua-he.com";
+
+    // 1. Kiểm tra xem người dùng đã login chưa
+    async function checkAuth() {
+        try {
+            // Gọi API check xem session lưu trên Katabump còn sống không
+            const res = await fetch(`${API_URL}/api/user`, { credentials: 'include' });
+            if (res.ok) {
+                const user = await res.json();
+                // Đã đăng nhập
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('main-app').style.display = 'block';
+                
+                // Hiển thị profile
+                document.getElementById('user-name').innerText = user.username;
+                document.getElementById('user-tag').innerText = `#${user.discriminator || '0'}`;
+                if(user.avatar) {
+                    document.getElementById('user-avatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
+                }
+            } else {
+                // Chưa đăng nhập
+                document.getElementById('login-screen').style.display = 'flex';
+                document.getElementById('main-app').style.display = 'none';
+            }
+        } catch (e) {
+            // Lỗi mạng
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('main-app').style.display = 'none';
+        }
+    }
+
+    async function logout() {
+        await fetch(`${API_URL}/api/logout`, { credentials: 'include' });
+        window.location.reload();
+    }
+
+    // 2. Logic chuyển tab
+    function switchTab(tabName, element = null) {
+        if (element) {
+            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+        } else {
+            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+            if(tabName === 'badge') document.querySelectorAll('.menu-item')[0].classList.add('active');
+            if(tabName === 'quest') document.querySelectorAll('.menu-item')[1].classList.add('active');
+        }
+
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.getElementById(`tab-${tabName}`).classList.add('active');
+
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        if(tabName === 'history') {
+            document.querySelectorAll('.nav-item')[1].classList.add('active');
+            renderHistory();
+        } else {
+            document.querySelectorAll('.nav-item')[0].classList.add('active');
+        }
+    }
+
+    function writeLog(boxId, msg, type = 'info') {
+        const box = document.getElementById(boxId);
+        box.classList.add('active');
+        const time = new Date().toLocaleTimeString('vi-VN');
+        let color = '';
+        if (type === 'success') color = 'log-success';
+        if (type === 'error') color = 'log-error';
+        
+        box.innerHTML += `<div>[${time}] <span class="${color}">${msg}</span></div>`;
+        box.scrollTop = box.scrollHeight;
+    }
+
+    function addHistory(action, status, isSuccess) {
+        const history = JSON.parse(localStorage.getItem('vibe_history') || '[]');
+        history.unshift({
+            time: new Date().toLocaleString('vi-VN'),
+            action: action,
+            status: status,
+            isSuccess: isSuccess
+        });
+        localStorage.setItem('vibe_history', JSON.stringify(history.slice(0, 20)));
+    }
+
+    function renderHistory() {
+        const list = document.getElementById('history-list');
+        const history = JSON.parse(localStorage.getItem('vibe_history') || '[]');
+        
+        if (history.length === 0) {
+            list.innerHTML = `<div class="empty-history">Chưa có lịch sử chạy tool.</div>`;
+            return;
+        }
+
+        list.innerHTML = history.map(item => `
+            <div class="history-item">
+                <div class="history-time">${item.time}</div>
+                <div class="history-action">${item.action}</div>
+                <div class="history-status ${item.isSuccess ? 'success' : 'error'}">${item.status}</div>
+            </div>
+        `).join('');
+    }
+
+    // 3. Hàm chạy Badge
+    async function runBadge() {
+        const token = document.getElementById('badge-token').value.trim();
+        const cookie = document.getElementById('badge-cookie').value.trim();
+        const games = document.getElementById('badge-games').value;
+        const hours = document.getElementById('badge-hours').value;
+        const btn = document.getElementById('btn-run-badge');
+        const logBox = document.getElementById('log-badge');
+
+        if (!token || !cookie) return writeLog('log-badge', "Lỗi: Vui lòng nhập đủ Token và Cookie!", "error");
+
+        btn.disabled = true;
+        btn.innerText = "Đang xử lý...";
+        logBox.innerHTML = '';
+        writeLog('log-badge', `Đang gửi yêu cầu bơm ${hours}h cho ${games} game...`);
+
+        try {
+            const res = await fetch(`${API_URL}/api/claim`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token, cookie, games, hours })
+            });
+            const data = await res.json();
+            
+            if (res.ok) {
+                writeLog('log-badge', data.msg, "success");
+                addHistory(`Bơm Badge (${games} game, ${hours}h)`, data.msg, true);
+            } else {
+                writeLog('log-badge', data.msg || "Lỗi không xác định", "error");
+                addHistory(`Bơm Badge (${games} game, ${hours}h)`, data.msg || "Lỗi không xác định", false);
+            }
+        } catch (e) {
+            writeLog('log-badge', "Lỗi kết nối Server!", "error");
+            addHistory(`Bơm Badge (${games} game, ${hours}h)`, "Lỗi kết nối Server", false);
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "🚀 Bắt đầu bơm";
+        }
+    }
+
+    // 4. Hàm chạy Quest
+    async function runQuest() {
+        const token = document.getElementById('quest-token').value.trim();
+        const btn = document.getElementById('btn-run-quest');
+        const logBox = document.getElementById('log-quest');
+
+        if (!token) return writeLog('log-quest', "Lỗi: Vui lòng nhập Token!", "error");
+
+        btn.disabled = true;
+        btn.innerText = "Đang xử lý...";
+        logBox.innerHTML = '';
+        writeLog('log-quest', "Đang quét danh sách Quest...");
+
+        try {
+            const res = await fetch(`${API_URL}/api/quest`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token })
+            });
+            const data = await res.json();
+            
+            if (res.ok) {
+                writeLog('log-quest', data.msg, "success");
+                addHistory("Làm Auto Quest", data.msg, true);
+            } else {
+                writeLog('log-quest', data.msg || "Lỗi không xác định", "error");
+                addHistory("Làm Auto Quest", data.msg || "Lỗi không xác định", false);
+            }
+        } catch (e) {
+            writeLog('log-quest', "Lỗi kết nối Server!", "error");
+            addHistory("Làm Auto Quest", "Lỗi kết nối Server", false);
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "✨ Bắt đầu chạy";
+        }
+    }
+
+    // Chạy check auth khi tải trang
+    window.onload = checkAuth;
+</script>
+
+</body>
+</html>
