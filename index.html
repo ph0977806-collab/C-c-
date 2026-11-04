@@ -161,10 +161,10 @@
 
 <script>
     // ==========================================
-    // CẤU HÌNH CỦA HE
+    // CẤU HÌNH CỦA HE (Đã bỏ Cloudflare, dùng Render)
     // ==========================================
-    // Link Backend (Cloudflare Workers của he)
-    const API_URL = "https://c-c.ph0977806.workers.dev"; 
+    // Link Backend (Render)
+    const API_URL = "https://c-c-7n14.onrender.com"; 
     
     // Client ID của Bot (Lấy trên Developer Portal)
     const CLIENT_ID = "1567541821196996728";
@@ -200,7 +200,7 @@
                     alert("Đăng nhập thất bại!");
                 }
             } catch (e) {
-                alert("Lỗi kết nối server!");
+                alert("Lỗi kết nối server (Render có thể đang khởi động, đợi 30s và thử lại)!");
             }
         } else {
             const savedUser = localStorage.getItem('discord_user');
@@ -330,7 +330,7 @@
                 addHistory(`Bơm Badge (${games} game, ${hours}h)`, data.msg || "Lỗi không xác định", false);
             }
         } catch (e) {
-            writeLog('log-badge', "Lỗi kết nối Server!", "error");
+            writeLog('log-badge', "Lỗi kết nối Server (Đợi 30s do Render khởi động)!", "error");
             addHistory(`Bơm Badge (${games} game, ${hours}h)`, "Lỗi kết nối Server", false);
         } finally {
             btn.disabled = false;
@@ -367,7 +367,7 @@
                 addHistory("Làm Auto Quest", data.msg || "Lỗi không xác định", false);
             }
         } catch (e) {
-            writeLog('log-quest', "Lỗi kết nối Server!", "error");
+            writeLog('log-quest', "Lỗi kết nối Server (Đợi 30s do Render khởi động)!", "error");
             addHistory("Làm Auto Quest", "Lỗi kết nối Server", false);
         } finally {
             btn.disabled = false;
