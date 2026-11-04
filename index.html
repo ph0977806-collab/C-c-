@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vibe Tools - Discord Badge & Quest</title>
+    <title>CC - Discord Badge & Quest</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -85,26 +85,22 @@
 
 <div class="app-container">
     
-    <!-- ================= MÀN HÌNH LOGIN ================= -->
+    <!-- MÀN HÌNH LOGIN -->
     <div id="login-screen">
         <div class="login-box">
             <div style="font-size: 48px; margin-bottom: 16px;">🤖</div>
-            <div class="card-title" style="justify-content: center;">Vibe Tools</div>
-            <div class="card-desc">Vui lòng đăng nhập bằng Discord để sử dụng các tính năng bơm Badge và Auto Quest.</div>
-            
-            <a href="https://link-katabump-cua-he.com/api/login" class="btn btn-discord" id="btn-login">
-                Đăng nhập với Discord
-            </a>
+            <div class="card-title" style="justify-content: center;">CC</div>
+            <div class="card-desc">Vui lòng đăng nhập bằng Discord để sử dụng các tính năng.</div>
+            <button onclick="loginDiscord()" class="btn btn-discord">Đăng nhập với Discord</button>
         </div>
     </div>
 
-    <!-- ================= GIAO DIỆN CHÍNH ================= -->
+    <!-- GIAO DIỆN CHÍNH -->
     <div id="main-app" style="display: none;">
-        <!-- Header -->
         <div class="header">
             <div class="header-logo">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#5c53f2"/><path d="M8 12L11 15L16 9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                Vibe<span>Host</span>
+                CC
             </div>
             <div class="header-icons">
                 <button class="icon-btn" onclick="switchTab('history')">📜</button>
@@ -112,31 +108,28 @@
             </div>
         </div>
 
-        <!-- User Profile -->
         <div class="user-profile" id="user-profile">
             <div class="user-info">
                 <img class="avatar" id="user-avatar" src="" alt="Avatar">
                 <div>
-                    <div class="user-name" id="user-name">Đang tải...</div>
+                    <div class="user-name" id="user-name">...</div>
                     <div class="user-tag" id="user-tag">...</div>
                 </div>
             </div>
             <button class="logout-btn" onclick="logout()">Đăng xuất</button>
         </div>
 
-        <!-- Menu -->
         <div class="menu-section" id="main-menu">
             <div class="menu-label">SẢN PHẨM</div>
             <div class="menu-item active" onclick="switchTab('badge', this)"><span>⚔️</span> Discord Badge (Playtime)</div>
             <div class="menu-item" onclick="switchTab('quest', this)"><span>🎯</span> Auto Quest</div>
         </div>
 
-        <!-- CONTENT: BADGE -->
         <div id="tab-badge" class="tab-content active">
             <div class="card-title">⚔️ Bơm Playtime</div>
             <div class="card-desc">Tự động cộng giờ chơi game vào hồ sơ Discord.</div>
-            <div class="input-group"><label>Token Discord (Bắt buộc)</label><input type="password" id="badge-token" placeholder="Dán token..."></div>
-            <div class="input-group"><label>Cookie (cf_clearance)</label><textarea id="badge-cookie" rows="2" placeholder="Dán cookie..."></textarea></div>
+            <div class="input-group"><label>Token Discord</label><input type="password" id="badge-token" placeholder="Dán token..."></div>
+            <div class="input-group"><label>Cookie</label><textarea id="badge-cookie" rows="2" placeholder="Dán cookie..."></textarea></div>
             <div class="row">
                 <div class="input-group"><label>Số Game</label><input type="number" id="badge-games" value="100"></div>
                 <div class="input-group"><label>Giờ / Game</label><input type="number" id="badge-hours" value="10"></div>
@@ -145,23 +138,19 @@
             <div class="log-box" id="log-badge"></div>
         </div>
 
-        <!-- CONTENT: QUEST -->
         <div id="tab-quest" class="tab-content">
             <div class="card-title">🎯 Auto Quest</div>
-            <div class="card-desc">Tự động hoàn thành các nhiệm vụ (Quest) hiện có.</div>
-            <div class="input-group"><label>Token Discord (Bắt buộc)</label><input type="password" id="quest-token" placeholder="Dán token..."></div>
+            <div class="card-desc">Tự động hoàn thành các nhiệm vụ (Quest).</div>
+            <div class="input-group"><label>Token Discord</label><input type="password" id="quest-token" placeholder="Dán token..."></div>
             <button class="btn" id="btn-run-quest" onclick="runQuest()">✨ Bắt đầu chạy</button>
             <div class="log-box" id="log-quest"></div>
         </div>
 
-        <!-- CONTENT: HISTORY -->
         <div id="tab-history" class="tab-content">
             <div class="card-title">📜 Lịch Sử</div>
-            <div class="card-desc">Các lần chạy tool gần đây trên trình duyệt này.</div>
             <div class="history-list" id="history-list"></div>
         </div>
 
-        <!-- Bottom Nav -->
         <div class="bottom-nav">
             <div class="nav-item active" onclick="switchTab('badge', document.querySelectorAll('.menu-item')[0])">🏠 Trang chủ</div>
             <div class="nav-item" onclick="switchTab('history')">📜 Lịch sử</div>
@@ -172,45 +161,79 @@
 
 <script>
     // ==========================================
-    // THAY LINK KATABUMP CỦA HE VÀO ĐÂY
+    // CẤU HÌNH CỦA HE
     // ==========================================
-    const API_URL = "http://51.83.6.5:20177";
+    // Link Backend (Cloudflare Workers của he)
+    const API_URL = "https://c-c.ph0977806.workers.dev"; 
+    
+    // Client ID của Bot (Lấy trên Developer Portal)
+    const CLIENT_ID = "1567541821196996728";
+    
+    // Link trang web GitHub Pages của he (Nhớ có dấu / ở cuối)
+    const REDIRECT_URI = "https://ph0977806-collab.github.io/C-c-/";
 
-    // 1. Kiểm tra xem người dùng đã login chưa
+    // 1. Hàm Đăng nhập qua Discord OAuth2
+    function loginDiscord() {
+        const oauthUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=identify`;
+        window.location.href = oauthUrl;
+    }
+
+    // 2. Kiểm tra xem có code trên URL trả về không
     async function checkAuth() {
-        try {
-            // Gọi API check xem session lưu trên Katabump còn sống không
-            const res = await fetch(`${API_URL}/api/user`, { credentials: 'include' });
-            if (res.ok) {
-                const user = await res.json();
-                // Đã đăng nhập
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('main-app').style.display = 'block';
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+
+        if (code) {
+            try {
+                const res = await fetch(`${API_URL}/api/discord_login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code: code })
+                });
+                const data = await res.json();
                 
-                // Hiển thị profile
-                document.getElementById('user-name').innerText = user.username;
-                document.getElementById('user-tag').innerText = `#${user.discriminator || '0'}`;
-                if(user.avatar) {
-                    document.getElementById('user-avatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
+                if (data.status === 'success') {
+                    localStorage.setItem('discord_user', JSON.stringify(data.user));
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    showMainApp("OAuth");
+                } else {
+                    alert("Đăng nhập thất bại!");
                 }
+            } catch (e) {
+                alert("Lỗi kết nối server!");
+            }
+        } else {
+            const savedUser = localStorage.getItem('discord_user');
+            if (savedUser) {
+                showMainApp("OAuth");
             } else {
-                // Chưa đăng nhập
                 document.getElementById('login-screen').style.display = 'flex';
                 document.getElementById('main-app').style.display = 'none';
             }
-        } catch (e) {
-            // Lỗi mạng
-            document.getElementById('login-screen').style.display = 'flex';
-            document.getElementById('main-app').style.display = 'none';
         }
     }
 
-    async function logout() {
-        await fetch(`${API_URL}/api/logout`, { credentials: 'include' });
+    // 3. Hiển thị giao diện chính
+    function showMainApp(type) {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('main-app').style.display = 'block';
+
+        if (type === "OAuth") {
+            const user = JSON.parse(localStorage.getItem('discord_user'));
+            document.getElementById('user-name').innerText = user.username;
+            document.getElementById('user-tag').innerText = `#${user.discriminator || '0'}`;
+            if(user.avatar) {
+                document.getElementById('user-avatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
+            }
+        }
+    }
+
+    function logout() {
+        localStorage.removeItem('discord_user');
         window.location.reload();
     }
 
-    // 2. Logic chuyển tab
+    // 4. Logic chuyển tab
     function switchTab(tabName, element = null) {
         if (element) {
             document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
@@ -233,6 +256,7 @@
         }
     }
 
+    // 5. Ghi Log & Lịch sử
     function writeLog(boxId, msg, type = 'info') {
         const box = document.getElementById(boxId);
         box.classList.add('active');
@@ -274,7 +298,7 @@
         `).join('');
     }
 
-    // 3. Hàm chạy Badge
+    // 6. Chạy Badge
     async function runBadge() {
         const token = document.getElementById('badge-token').value.trim();
         const cookie = document.getElementById('badge-cookie').value.trim();
@@ -306,7 +330,7 @@
                 addHistory(`Bơm Badge (${games} game, ${hours}h)`, data.msg || "Lỗi không xác định", false);
             }
         } catch (e) {
-            writeLog('log-badge', "Lỗi kết nối Server!", "error");
+            writeLog('log-badge', "Lỗi kết nối Server (Đợi 30s do Host khởi động lại)!", "error");
             addHistory(`Bơm Badge (${games} game, ${hours}h)`, "Lỗi kết nối Server", false);
         } finally {
             btn.disabled = false;
@@ -314,7 +338,7 @@
         }
     }
 
-    // 4. Hàm chạy Quest
+    // 7. Chạy Quest
     async function runQuest() {
         const token = document.getElementById('quest-token').value.trim();
         const btn = document.getElementById('btn-run-quest');
@@ -343,7 +367,7 @@
                 addHistory("Làm Auto Quest", data.msg || "Lỗi không xác định", false);
             }
         } catch (e) {
-            writeLog('log-quest', "Lỗi kết nối Server!", "error");
+            writeLog('log-quest', "Lỗi kết nối Server (Đợi 30s do Host khởi động lại)!", "error");
             addHistory("Làm Auto Quest", "Lỗi kết nối Server", false);
         } finally {
             btn.disabled = false;
@@ -351,7 +375,7 @@
         }
     }
 
-    // Chạy check auth khi tải trang
+    // Chạy khi tải trang
     window.onload = checkAuth;
 </script>
 
