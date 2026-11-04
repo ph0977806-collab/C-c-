@@ -5,13 +5,13 @@ import time
 import uuid
 import urllib.request
 import urllib.error
+import urllib.parse
 import os
 import logging
 
 app = Flask(__name__)
-CORS(app) # Cho phép mọi nguồn gọi API (GitHub/Cloudflare Pages gọi được)
+CORS(app, supports_credentials=True) 
 
-# Tắt log của Flask để bảo mật (không in token/cookie ra màn hình Render)
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR) 
 
@@ -20,6 +20,14 @@ SCIENCE_URL = "https://discord.com/api/v9/science"
 GAMES_CDN_URL = "https://cdn.discordapp.com/detectables/games.json"
 QUESTS_URL = "https://discord.com/api/v9/quests/@me"
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) discord/1.0.9253 Chrome/148.0.7778.280 Electron/42.7.1 Safari/537.36"
+
+# ==========================================
+# ĐÃ ĐIỀN THÔNG TIN OAUTH2 CỦA HE VÀO ĐÂY
+# ==========================================
+CLIENT_ID = "1567541821196996728"
+CLIENT_SECRET = "gX9V9BL--R6cpmwW9PDEhPYvtepINtqo"
+REDIRECT_URI = "https://c-c.ph0977806.workers.dev/"
+# ==========================================
 
 def safe_request(url, headers, data=None, method="GET", timeout=15):
     req = urllib.request.Request(url, data=data, method=method, headers=headers)
@@ -57,6 +65,39 @@ def load_games():
     except:
         return []
 
+@app.route('/api/discord_login', methods=['POST'])
+def discord_login():
+    data = request.json
+    code = data.get("code")
+    
+    if not code:
+        return jsonify({"status": "error", "msg": "Thiếu code"}), 400
+
+    token_url = "https://discord.com/api/oauth2/token"
+    payload = {
+        "client_id": CLIENT_ID,
+        "client_secret": CLIENT_SECRET,
+        "grant_type": "authorization_code",
+        "code": code,
+        "redirect_uri": REDIRECT_URI
+    }
+    headers = {"Content-Type": "application/x-www-form-urlencoded"}
+    body = urllib.parse.urlencode(payload).encode("utf-8")
+    
+    status, token_data = safe_request(token_url, headers, data=body, method="POST")
+    if status != 200 or not token_data:
+        return jsonify({"status": "error", "msg": "Lỗi xác thực Discord"}), 401
+
+    access_token = token_data.get("access_token")
+    user_url = "https://discord.com/api/users/@me"
+    user_headers = {"Authorization": f"Bearer {access_token}"}
+    u_status, user_info = safe_request(user_url, user_headers)
+    
+    if u_status == 200 and user_info:
+        return jsonify({"status": "success", "user": user_info})
+    else:
+        return jsonify({"status": "error", "msg": "Không lấy được thông tin user"}), 401
+
 @app.route('/api/claim', methods=['POST'])
 def claim_badge():
     try:
@@ -75,7 +116,7 @@ def claim_badge():
 
         all_games = load_games()
         if not all_games:
-            return jsonify({"status": "error", "msg": "Lỗi tải danh sách game từ Discord"}), 500
+            return jsonify({"status": "error", "msg": "Lỗi tải danh sách game"}), 500
 
         selected_games = all_games[:num_games]
         duration_ms = int(hours * 3600 * 1000)
@@ -156,9 +197,8 @@ def do_quests():
 
 @app.route('/')
 def index():
-    return "API is running..."
+    return "CC API is running..."
 
 if __name__ == '__main__':
-    # Tự động nhận PORT do Render cấp
     port = int(os.environ.get("PORT", 8080))
     app.run(host='0.0.0.0', port=port)
