@@ -15,30 +15,25 @@
         body { background-color: var(--bg-body); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; }
         .app-container { width: 100%; max-width: 480px; background: var(--bg-card); min-height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.05); position: relative; padding-bottom: 80px; }
 
-        /* Header */
         .header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); background: var(--bg-card); position: sticky; top: 0; z-index: 10; }
         .header-logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; }
         .header-logo span { color: var(--primary); }
         .header-icons { display: flex; gap: 12px; }
         .icon-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; background: transparent; cursor: pointer; color: var(--text-muted); font-size: 16px; }
 
-        /* User Profile */
         .user-profile { margin: 16px 20px; padding: 16px; background: var(--bg-body); border: 1px solid var(--border); border-radius: 16px; display: flex; align-items: center; justify-content: space-between; }
         .user-info { display: flex; align-items: center; gap: 12px; }
         .avatar { width: 44px; height: 44px; border-radius: 50%; background: #5865F2; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 20px; object-fit: cover; }
         .user-name { font-weight: 600; font-size: 15px; }
         .user-tag { font-size: 13px; color: var(--text-muted); }
-        .balance { background: #ecfdf5; color: var(--success); padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
         .logout-btn { font-size: 13px; color: var(--danger); cursor: pointer; font-weight: 600; background: #fee2e2; padding: 8px 12px; border-radius: 8px; border: none; }
 
-        /* Menu List */
         .menu-section { padding: 0 20px; margin-bottom: 24px; }
         .menu-label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
         .menu-item { display: flex; align-items: center; gap: 16px; padding: 16px; border-radius: 12px; cursor: pointer; transition: background 0.2s; font-weight: 500; font-size: 15px; }
         .menu-item:hover { background: var(--bg-body); }
         .menu-item.active { background: #f3f4f6; font-weight: 600; }
 
-        /* Form Content */
         .tab-content { display: none; padding: 0 20px; animation: fadeIn 0.3s ease; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
@@ -54,13 +49,11 @@
         .btn:hover { background: var(--primary-hover); }
         .btn:disabled { background: var(--border); cursor: not-allowed; }
 
-        /* Log Box */
         .log-box { background: #1e1e24; color: #d1d5db; padding: 16px; border-radius: 12px; font-family: monospace; font-size: 13px; height: 150px; overflow-y: auto; margin-top: 24px; display: none; }
         .log-box.active { display: block; }
         .log-success { color: #34d399; }
         .log-error { color: #f87171; }
 
-        /* History List */
         .history-list { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
         .history-item { background: var(--bg-body); border: 1px solid var(--border); padding: 12px 16px; border-radius: 12px; display: flex; flex-direction: column; gap: 4px; }
         .history-time { font-size: 12px; color: var(--text-muted); }
@@ -69,12 +62,10 @@
         .history-status.error { color: var(--danger); font-size: 13px; }
         .empty-history { text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 20px; }
 
-        /* Bottom Nav */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 480px; background: var(--bg-card); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 12px 0; z-index: 10; }
         .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 11px; color: var(--text-muted); cursor: pointer; }
         .nav-item.active { color: var(--primary); font-weight: 600; }
 
-        /* Auth Screen */
         #auth-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; padding: 24px; text-align: center; }
         .auth-box { width: 100%; padding: 24px; border-radius: 16px; border: 1px solid var(--border); background: var(--bg-body); }
         .auth-toggle { margin-top: 16px; font-size: 14px; color: var(--primary); cursor: pointer; text-decoration: underline; }
@@ -84,7 +75,6 @@
 
 <div class="app-container">
     
-    <!-- MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ -->
     <div id="auth-screen">
         <div class="auth-box">
             <div style="font-size: 48px; margin-bottom: 16px;">🤖</div>
@@ -103,7 +93,6 @@
         </div>
     </div>
 
-    <!-- GIAO DIỆN CHÍNH -->
     <div id="main-app" style="display: none;">
         <div class="header">
             <div class="header-logo">
@@ -167,13 +156,10 @@
 
 <script>
     // ==========================================
-    // CẤU HÌNH BACKEND (Đã trỏ về máy tính của he)
+    // CẤU HÌNH LINK NGROK VÀO ĐÂY (Bỏ dấu / ở cuối)
     // ==========================================
-    const API_URL = "http://127.0.0.1:5000"; 
+    const API_URL = "https://random-words-here.ngrok-free.app"; 
 
-    // ==========================================
-    // LOGIC ĐĂNG NHẬP / ĐĂNG KÝ (LOCAL)
-    // ==========================================
     let isLoginMode = true;
 
     function toggleAuthMode() {
@@ -234,9 +220,6 @@
         window.location.reload();
     }
 
-    // ==========================================
-    // LOGIC CHUYỂN TAB
-    // ==========================================
     function switchTab(tabName, element = null) {
         if (element) {
             document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
@@ -259,9 +242,6 @@
         }
     }
 
-    // ==========================================
-    // LOGIC BƠM BADGE & QUEST
-    // ==========================================
     function writeLog(boxId, msg, type = 'info') {
         const box = document.getElementById(boxId);
         box.classList.add('active');
@@ -334,7 +314,7 @@
                 addHistory(`Bơm Badge (${games} game, ${hours}h)`, data.msg || "Lỗi không xác định", false);
             }
         } catch (e) {
-            writeLog('log-badge', "Lỗi kết nối Server! (Hãy chắc chắn file main.py trên PC đang chạy)", "error");
+            writeLog('log-badge', "Lỗi kết nối Server! (Kiểm tra lại Ngrok hoặc main.py)", "error");
             addHistory(`Bơm Badge (${games} game, ${hours}h)`, "Lỗi kết nối Server", false);
         } finally {
             btn.disabled = false;
@@ -370,7 +350,7 @@
                 addHistory("Làm Auto Quest", data.msg || "Lỗi không xác định", false);
             }
         } catch (e) {
-            writeLog('log-quest', "Lỗi kết nối Server! (Hãy chắc chắn file main.py trên PC đang chạy)", "error");
+            writeLog('log-quest', "Lỗi kết nối Server! (Kiểm tra lại Ngrok hoặc main.py)", "error");
             addHistory("Làm Auto Quest", "Lỗi kết nối Server", false);
         } finally {
             btn.disabled = false;
@@ -378,7 +358,6 @@
         }
     }
 
-    // Chạy khi tải trang
     window.onload = checkAuth;
 </script>
 
