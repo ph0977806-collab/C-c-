@@ -167,9 +167,9 @@
 
 <script>
     // ==========================================
-    // CẤU HÌNH BACKEND
+    // CẤU HÌNH BACKEND (Đã trỏ về máy tính của he)
     // ==========================================
-    const API_URL = "https://c-c-7n14.onrender.com"; 
+    const API_URL = "http://127.0.0.1:5000"; 
 
     // ==========================================
     // LOGIC ĐĂNG NHẬP / ĐĂNG KÝ (LOCAL)
@@ -189,11 +189,9 @@
 
         if (!user || !pass) return alert("Vui lòng nhập đầy đủ tên và mật khẩu!");
 
-        // Lấy danh sách user từ LocalStorage
         let users = JSON.parse(localStorage.getItem('cc_users') || '{}');
 
         if (isLoginMode) {
-            // Đăng nhập
             if (users[user] && users[user] === pass) {
                 localStorage.setItem('cc_current_user', user);
                 showMainApp(user);
@@ -201,7 +199,6 @@
                 alert("Sai tên đăng nhập hoặc mật khẩu!");
             }
         } else {
-            // Đăng ký
             if (users[user]) {
                 alert("Tên đăng nhập này đã có người dùng!");
             } else {
@@ -337,7 +334,7 @@
                 addHistory(`Bơm Badge (${games} game, ${hours}h)`, data.msg || "Lỗi không xác định", false);
             }
         } catch (e) {
-            writeLog('log-badge', "Lỗi kết nối Server (Đợi 30s do Render khởi động)!", "error");
+            writeLog('log-badge', "Lỗi kết nối Server! (Hãy chắc chắn file main.py trên PC đang chạy)", "error");
             addHistory(`Bơm Badge (${games} game, ${hours}h)`, "Lỗi kết nối Server", false);
         } finally {
             btn.disabled = false;
@@ -373,7 +370,7 @@
                 addHistory("Làm Auto Quest", data.msg || "Lỗi không xác định", false);
             }
         } catch (e) {
-            writeLog('log-quest', "Lỗi kết nối Server!", "error");
+            writeLog('log-quest', "Lỗi kết nối Server! (Hãy chắc chắn file main.py trên PC đang chạy)", "error");
             addHistory("Làm Auto Quest", "Lỗi kết nối Server", false);
         } finally {
             btn.disabled = false;
